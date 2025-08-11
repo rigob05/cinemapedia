@@ -5,7 +5,7 @@ class CustomAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleMedium;
+    //final titleStyle = Theme.of(context).textTheme.titleMedium;
     return SafeArea(
       bottom: false,
       child: Padding(
