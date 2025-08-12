@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
@@ -35,8 +33,7 @@ class _MoviesHorizontalListviewState extends State<MoviesHorizontalListview> {
 
       if ((scrollController.position.pixels + 200) >=
           scrollController.position.maxScrollExtent)
-        print('Load Next Page');
-
+        ;
       widget.loadNextPage!();
     });
   }
@@ -44,7 +41,7 @@ class _MoviesHorizontalListviewState extends State<MoviesHorizontalListview> {
   @override
   void dispose() {
     scrollController.dispose();
-    super.initState();
+    super.dispose();
   }
 
   @override
@@ -65,7 +62,7 @@ class _MoviesHorizontalListviewState extends State<MoviesHorizontalListview> {
               scrollDirection: Axis.horizontal,
               physics: BouncingScrollPhysics(),
               itemBuilder: (context, index) {
-                return _Slide(movie: widget.movies[index]);
+                return FadeInRight(child: _Slide(movie: widget.movies[index]));
               },
             ),
           ),

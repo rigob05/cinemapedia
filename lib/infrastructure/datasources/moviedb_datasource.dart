@@ -5,6 +5,18 @@ import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/domain/sources/movie_src.dart';
 import 'package:cinemapedia/config/constant/environment.dart';
 
+List<Movie> _JsonToMovies(Map<String, dynamic> json) {
+  final movieDBResponse = MovieDbResponse.fromJson(json);
+  final List<Movie> movies =
+      movieDBResponse.results
+          .where((moviedb) => moviedb.posterPath != 'no-poster')
+          .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))
+          .toList()
+        ..sort((a, b) => b.releaseDate.compareTo(a.releaseDate));
+
+  return movies;
+}
+
 class MoviedbDatasource extends MovieSrc {
   final dio = Dio(
     BaseOptions(
@@ -22,14 +34,30 @@ class MoviedbDatasource extends MovieSrc {
       '/movie/now_playing',
       queryParameters: {'page': page},
     );
-    final movieDBResponse = MovieDbResponse.fromJson(response.data);
-    final List<Movie> movies =
-        movieDBResponse.results
-            .where((moviedb) => moviedb.posterPath != 'no-poster')
-            .map((moviedb) => MovieMapper.movieDBToEntity(moviedb))
-            .toList()
-          ..sort((a, b) => b.releaseDate.compareTo(a.releaseDate));
+    return _JsonToMovies(response.data);
+  }
 
-    return movies;
+  @override
+  Future<List<Movie>> getPopular({int page = 1}) async {
+    final response = await dio.get(
+      '/movie/popular',
+      queryParameters: {'page': page},
+    );
+    return _JsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Movie>> getTopRated({int page = 1}) async {
+    final response = await dio.get(
+      '/movie/top_rated',
+      queryParameters: {'page': page},
+    );
+    return _JsonToMovies(response.data);
+  }
+
+  @override
+  Future<List<Movie>> getUpcoming({int page = 1}) async {
+    final response = await dio.get('/movie/upcoming');
+    return _JsonToMovies(response.data);
   }
 }
