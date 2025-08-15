@@ -1,5 +1,5 @@
 import 'package:cinemapedia/domain/entities/movie.dart';
-import 'package:cinemapedia/presentation/providers/movie_details_provider.dart';
+import 'package:cinemapedia/presentation/providers/movies/movie_details_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -70,7 +70,10 @@ class _MovieDetails extends StatelessWidget {
               // Imagen
               ClipRRect(
                 borderRadius: BorderRadius.circular(24),
-                child: Image.network(movie.posterPath, width: size.width * 0.4),
+                child: Image.network(
+                  movie.posterPath,
+                  width: size.width * 0.38,
+                ),
               ),
               SizedBox(width: 12),
               // Descripcion de la pelicula

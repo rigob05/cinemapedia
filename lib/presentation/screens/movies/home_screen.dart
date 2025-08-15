@@ -1,6 +1,6 @@
-import 'package:cinemapedia/presentation/providers/frist_loader.dart';
-import 'package:cinemapedia/presentation/providers/movies_providers.dart';
-import 'package:cinemapedia/presentation/providers/movies_slideshow_provider.dart';
+import 'package:cinemapedia/presentation/providers/movies/frist_loader.dart';
+import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
+import 'package:cinemapedia/presentation/providers/movies/movies_slideshow_provider.dart';
 import 'package:cinemapedia/presentation/widgets/movies/movies_horizontal_listview.dart';
 import 'package:cinemapedia/presentation/widgets/shared/full_screen_loader.dart';
 import 'package:cinemapedia/presentation/widgets/widgets.dart';
