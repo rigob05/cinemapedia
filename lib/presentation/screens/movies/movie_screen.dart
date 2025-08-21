@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:animate_do/animate_do.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentation/providers/actors/actors_provider.dart';
@@ -189,13 +187,21 @@ class _ActorsByMovie extends ConsumerWidget {
   }
 }
 
+
+final isFavoriteProvider = FutureProvider.family.autoDispose((ref, int movieId){
+  final localStorageRepository = ref.watch(localStorRepositoryProvider);
+
+  return localStorageRepository.isMovieFavorite(movieId);
+});
+
+
 class _CustomSliverAppBar extends ConsumerWidget {
   final Movie movie;
-
   const _CustomSliverAppBar({required this.movie});
 
   @override
   Widget build(BuildContext context, ref) {
+    final isFavoriteFuture = ref.watch(isFavoriteProvider(movie.id));
     final size = MediaQuery.of(context).size;
 
     return SliverAppBar(
@@ -205,8 +211,17 @@ class _CustomSliverAppBar extends ConsumerWidget {
         IconButton(
           onPressed: () {
             ref.watch(localStorRepositoryProvider).toggleFavorite(movie);
+            ref.invalidate(isFavoriteProvider(movie.id));
           }, 
-          icon: Icon(Icons.favorite_border)),
+          icon: isFavoriteFuture.when(
+            loading: () => CircularProgressIndicator(strokeWidth: 2),
+            data: (isFavorite) => isFavorite
+            ? const Icon(Icons.favorite, color: Colors.red)
+            : const Icon(Icons.favorite_border), 
+            error: (__, _) => throw UnimplementedError(), 
+          ),
+        )
+          
       ],
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),

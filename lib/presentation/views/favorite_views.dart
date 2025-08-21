@@ -1,4 +1,7 @@
+import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/presentation/providers/storage/local_favorite_movies_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class FavoritesView extends StatelessWidget {
@@ -18,7 +21,43 @@ class FavoritesView extends StatelessWidget {
           ),
         ],
       ),
-      body: const _EmptyFavorites(),
+      body: _LoadFavorite(),
+    );
+  }
+}
+
+class _LoadFavorite extends ConsumerStatefulWidget {
+  const _LoadFavorite();
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoadFavoriteState();
+}
+
+class _LoadFavoriteState extends ConsumerState<_LoadFavorite> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    ref.read(favoriteMovieProvider.notifier).loadNextPage();  
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final movies = ref.watch(favoriteMovieProvider).values.toList();
+
+    if (movies.isEmpty){
+      return _EmptyFavorites();
+    }
+
+    return ListView.builder(
+      itemCount: movies.length,
+      itemBuilder: (context, index) {
+        return 
+        ListTile(
+          title: Text((movies[index].title)),
+        );
+      },
     );
   }
 }
