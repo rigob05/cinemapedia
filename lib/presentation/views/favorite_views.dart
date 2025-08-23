@@ -1,5 +1,5 @@
-import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:cinemapedia/presentation/providers/storage/local_favorite_movies_provider.dart';
+import 'package:cinemapedia/presentation/widgets/movies/movies_mansonry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -34,12 +34,27 @@ class _LoadFavorite extends ConsumerStatefulWidget {
 }
 
 class _LoadFavoriteState extends ConsumerState<_LoadFavorite> {
-
+  bool isLastPage = false;
+  bool isLoading = false;
+  
 
   @override
   void initState() {
     super.initState();
-    ref.read(favoriteMovieProvider.notifier).loadNextPage();  
+    loadNextPage();
+  }
+
+  void loadNextPage() async {
+    if (isLastPage || isLoading) return;
+    isLoading = true;
+    final movies = await ref
+        .read(favoriteMovieProvider.notifier)
+        .loadNextPage();
+    isLoading = false;
+
+    if (movies.isEmpty) {
+      isLastPage = true;
+    }
   }
 
   @override
@@ -47,45 +62,28 @@ class _LoadFavoriteState extends ConsumerState<_LoadFavorite> {
     final movies = ref.watch(favoriteMovieProvider).values.toList();
 
     if (movies.isEmpty){
-      return _EmptyFavorites();
-    }
-
-    return ListView.builder(
-      itemCount: movies.length,
-      itemBuilder: (context, index) {
-        return 
-        ListTile(
-          title: Text((movies[index].title)),
-        );
-      },
-    );
-  }
-}
-
-class _EmptyFavorites extends StatelessWidget {
-  const _EmptyFavorites();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context).textTheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
+      return Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.favorite_border, size: 64),
-            const SizedBox(height: 12),
-            Text('Aún no tienes favoritos', style: theme.titleMedium),
-            const SizedBox(height: 6),
-            Text(
-              'Marca películas con el corazón para verlas aquí.',
-              style: theme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
+            Icon(Icons.favorite, size: 60,),
+            Text('Ohhh No!!!!'),
+            Text('No tienes peliculas favoritas')
           ],
         ),
+      );
+    }
+
+
+
+
+    return Scaffold(
+      body: MoviesMansonry(
+        movies: movies, 
+        loadNextPage: loadNextPage
       ),
     );
   }
 }
+
